@@ -5,4 +5,10 @@ export default defineNuxtConfig({
   imports: {
     dirs: ['composables']
   },
+
+  nitro: {
+    experimental: {
+      websocket: true
+    }
+  },
 })
