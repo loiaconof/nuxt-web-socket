@@ -15,9 +15,14 @@ export function useSharedState<T extends Record<string, any>>(id: string = 'stat
 
     if (import.meta.client) {
         let snapshot = hash(state.value)
+        let paused = false
         const ws = useWebSocket()!
 
         async function syncState(newState: T) {
+            if (paused) {
+                paused = false
+                return
+            }
             await ws.ready
             ws.ws.send(JSON.stringify({id, value: newState}))
         }
@@ -34,6 +39,7 @@ export function useSharedState<T extends Record<string, any>>(id: string = 'stat
             if(newSnapshot === snapshot)
                 return
 
+            paused = true
             snapshot = newSnapshot
             state.value = data.value
         })
